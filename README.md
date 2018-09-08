@@ -4,7 +4,7 @@ This is a tool for programming contest.
 
 ## Feature
 
-* output a new file attached `cutil` methods
+* output a new file attached methods under `cutil` package
 
   * to do this, you need to write tokens around the methods (see `example/reader.go`)
 
