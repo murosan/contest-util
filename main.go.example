@@ -1,0 +1,13 @@
+package main
+
+import (
+	"fmt"
+	"github.com/murosan/contest-util/cutil"
+)
+
+func main() {
+	reader := cutil.NewReader(100000)
+	s := cutil.ReadLine(reader)
+
+	fmt.Println(s)
+}
