@@ -31,9 +31,10 @@ var (
 	dependsOnRegex = regexp.MustCompile(`dependsOn\[(.*)]`)
 	tokenRegex     = regexp.MustCompile(`//(imports|dependsOn|start:|end:).*`)
 
-	utils = listNames(UtilDir)
-	emp   = []byte("")
-	delm  = []byte(",")
+	ignoreFiles = []string{"LICENSE", "README.md"}
+	utils       = listNames(UtilDir)
+	emp         = []byte("")
+	delm        = []byte(",")
 )
 
 func main() {
@@ -165,7 +166,18 @@ func listNames(dirname string) []string {
 	}
 	names := make([]string, len(files))
 	for i, f := range files {
-		names[i] = f.Name()
+		if !(f.IsDir() || contains(ignoreFiles, f.Name())) {
+			names[i] = f.Name()
+		}
 	}
 	return names
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
