@@ -164,10 +164,10 @@ func listNames(dirname string) []string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	names := make([]string, len(files))
-	for i, f := range files {
+	var names []string
+	for _, f := range files {
 		if !(f.IsDir() || contains(ignoreFiles, f.Name())) {
-			names[i] = f.Name()
+			names = append(names, f.Name())
 		}
 	}
 	return names
