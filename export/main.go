@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"go/format"
 	"io/ioutil"
 	"log"
@@ -31,9 +32,10 @@ var (
 	dependsOnRegex = regexp.MustCompile(`dependsOn\[(.*)]`)
 	tokenRegex     = regexp.MustCompile(`//(imports|dependsOn|start:|end:).*`)
 
-	utils = listNames(UtilDir)
-	emp   = []byte("")
-	delm  = []byte(",")
+	ignoreFileRegexp = regexp.MustCompile(`.*_test.go`)
+	utils            = listNames(UtilDir)
+	emp              = []byte("")
+	delm             = []byte(",")
 )
 
 func main() {
@@ -165,9 +167,10 @@ func listNames(dirname string) []string {
 	}
 	var names []string
 	for _, f := range files {
-		if !f.IsDir() {
+		if !f.IsDir() && !ignoreFileRegexp.MatchString(f.Name()) {
 			names = append(names, f.Name())
 		}
 	}
+	fmt.Println(names)
 	return names
 }
