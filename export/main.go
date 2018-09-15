@@ -7,11 +7,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"go/format"
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -126,38 +126,28 @@ func main() {
 
 	noHead := headRegex.ReplaceAll(out, emp)
 
+	// run `go fmt`
 	result := append([]byte(joined), noHead...)
 	pretty, e := format.Source(result)
 	if e != nil {
 		panic(e)
 	}
 
+	// create output directory if not exists
 	dir := filepath.Dir(OutputPath)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		os.Mkdir(dir, 0755)
 	}
 
+	// write to output/main.go
 	e = ioutil.WriteFile(filepath.Clean(OutputPath), pretty, 0644)
 	if e != nil {
 		panic(e)
 	}
 
-	// copy to clipboard (mac only)
-	c := exec.Command("pbcopy")
-	in, err := c.StdinPipe()
-	if err != nil {
-		panic(err)
-	}
-	if err := c.Start(); err != nil {
-		panic(err)
-	}
-	if _, err := in.Write(pretty); err != nil {
-		panic(err)
-	}
-	if err := in.Close(); err != nil {
-		panic(err)
-	}
-	c.Wait()
+	// copy to clipboard
+	clipboard.WriteAll(string(pretty))
+	fmt.Println("copied!")
 }
 
 func listNames(dirname string) []string {
@@ -171,6 +161,5 @@ func listNames(dirname string) []string {
 			names = append(names, f.Name())
 		}
 	}
-	fmt.Println(names)
 	return names
 }
