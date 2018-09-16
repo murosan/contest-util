@@ -7,11 +7,20 @@ package main
 import (
 	"fmt"
 	"github.com/murosan/contest-util/cutil"
+	"os"
 )
 
-func main() {
-	reader := cutil.NewReader(100000)
-	s := cutil.ReadLine(reader)
+//lib[sc] <------ this is necessary for importing receiver methods
+// for multiple, declare like this ---> //lib[sc|intutil]
 
-	fmt.Println(s)
+func main() {
+	// initialize scanner
+	// as declared in scanner.go, also sets default splitter to 'bufio.ScanWords'
+	sc := cutil.NewScanner(os.Stdin)
+
+	// changes splitter
+	sc.SetSplitter("\n")
+
+	input := sc.ScanStr()
+	fmt.Println(input)
 }
