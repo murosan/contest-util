@@ -24,13 +24,14 @@ const (
 )
 
 var (
-	deleteRegex    = regexp.MustCompile(`"github\.com/murosan/contest/cutil"|cutil\.`)
-	headRegex      = regexp.MustCompile(`(?s)package.*import.?(\(.*?\)|".*?")`)
-	quotedRegex    = regexp.MustCompile(`"([A-Za-z]*)"`)
-	libRegex       = regexp.MustCompile(`cutil\.([A-Za-z]*)`)
-	importRegex    = regexp.MustCompile(`imports\[(.*)]`)
-	dependsOnRegex = regexp.MustCompile(`dependsOn\[(.*)]`)
-	tokenRegex     = regexp.MustCompile(`//(imports|dependsOn|start:|end:).*`)
+	deleteRegex      = regexp.MustCompile(`"github\.com/murosan/contest/cutil"|cutil\.|//lib\[(.*)]`)
+	headRegex        = regexp.MustCompile(`(?s)package.*import.?(\(.*?\)|".*?")`)
+	quotedRegex      = regexp.MustCompile(`"([A-Za-z]*)"`)
+	libAddRegex      = regexp.MustCompile(`//lib\[(.*)]`)
+	defaultLibRegexp = regexp.MustCompile(`(cutil)\.([A-Za-z]*)`)
+	importRegex      = regexp.MustCompile(`imports\[(.*)]`)
+	dependsOnRegex   = regexp.MustCompile(`dependsOn\[(.*)]`)
+	tokenRegex       = regexp.MustCompile(`//(imports|dependsOn|start:|end:).*`)
 
 	ignoreFileRegexp = regexp.MustCompile(`.*_test.go`)
 	utils            = listNames(UtilDir)
@@ -50,11 +51,21 @@ func main() {
 		log.Fatalln("failed to load. path="+abs, err)
 	}
 
+	// search additional lib prefix
+	additionalLib := libAddRegex.FindSubmatch(content)
+
+	libRegex := defaultLibRegexp
+	if len(additionalLib) > 0 {
+		l := string(additionalLib[1])
+		libRegex = regexp.MustCompile("(cutil" + "|" + l + ").([A-Za-z]*)")
+	}
+
 	// extract method names
 	arr := libRegex.FindAllStringSubmatch(string(content), -1)
 	funcNames := make([]string, len(arr))
 	for i, v := range arr {
-		funcNames[i] = v[1]
+
+		funcNames[i] = v[2]
 	}
 
 	// delete cutil from main
