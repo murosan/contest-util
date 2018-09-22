@@ -28,7 +28,7 @@ var (
 	headRegex        = regexp.MustCompile(`(?s)package.*import.?(\(.*?\)|".*?")`)
 	quotedRegex      = regexp.MustCompile(`"([A-Za-z]*)"`)
 	libAddRegex      = regexp.MustCompile(`//lib\[(.*)]`)
-	defaultLibRegexp = regexp.MustCompile(`(cutil)\.([A-Za-z]*)`)
+	defaultLibRegexp = regexp.MustCompile(`(cutil)\.([A-Za-z0-9]*)`)
 	importRegex      = regexp.MustCompile(`imports\[(.*)]`)
 	dependsOnRegex   = regexp.MustCompile(`dependsOn\[(.*)]`)
 	tokenRegex       = regexp.MustCompile(`//(imports|dependsOn|start:|end:).*`)
