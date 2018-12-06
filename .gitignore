@@ -2,4 +2,5 @@
 /cutil
 /main
 /main.go
+/main_test.go
 /vendor
